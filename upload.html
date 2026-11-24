@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#999999" />
+    <meta name="description" content="Snail IDE Revisited" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <title>Snail IDE - Editor</title>
+    <style>
+      :root {
+        --bg: #0b1020;
+        --accent: #4c97ff;
+      }
+
+      html, body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--bg);
+        overflow: hidden;
+      }
+
+      body {
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      .loader {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--bg);
+        color: white;
+        font-size: 18px;
+        letter-spacing: 0.02em;
+        z-index: 20;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      iframe {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        border: 0;
+        background: #ffffff;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="loader" class="loader">	</div>
+
+    <iframe
+      id="websimFrame"
+      title="Snail IDE Revisited"
+      allow="fullscreen; clipboard-write; web-share"
+      referrerpolicy="strict-origin-when-cross-origin"
+      loading="eager">
+    </iframe>
+
+    <script>
+      const BASE_URL =
+        "https://ggnyqw2a4g1ew4ifdbbu.c.websim.com/upload.html?__websim_origin=https%3A%2F%2Fwebsim.com&__websim_route=%7B%22type%22%3A%22slug%22%2C%22username%22%3A%22EmeSim2%22%2C%22slug%22%3A%22snail-ide-revisited%22%7D";
+
+      const iframe = document.getElementById("websimFrame");
+      const loader = document.getElementById("loader");
+
+      function buildTargetUrl() {
+        const url = new URL(BASE_URL);
+        const params = new URLSearchParams(window.location.search);
+        const hash = window.location.hash;
+
+        // preserve the params on the custom domain
+        if (params.has("runp")) {
+          url.searchParams.set("runp", params.get("runp"));
+        }
+
+        if (params.has("projects")) {
+          url.searchParams.set("projects", params.get("projects"));
+        }
+
+        if (hash === "#editor") {
+          url.hash = "editor";
+        }
+
+        return url.toString();
+      }
+
+      iframe.src = buildTargetUrl();
+
+      iframe.addEventListener("load", () => {
+        setTimeout(() => loader.classList.add("hidden"), 200);
+      });
+
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("/service-worker.js").catch(() => {});
+        });
+      }
+    </script>
+  </body>
+</html>
